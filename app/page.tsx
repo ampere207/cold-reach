@@ -1,103 +1,140 @@
-import Image from "next/image";
+'use client'
+
+import {
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from '@clerk/nextjs'
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
+import { Sparkles, Mail, Settings2, BarChart } from 'lucide-react'
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Hello World
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-               page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="min-h-screen bg-gradient-to-br from-white via-[#B8FFF2] to-[#A0E7E5] relative overflow-hidden">
+      {/* Background visual elements */}
+      <div className="absolute w-96 h-96 bg-[#E3DFFF] rounded-full blur-3xl opacity-30 -top-10 -left-10 animate-pulse"></div>
+      <div className="absolute w-72 h-72 bg-[#A0E7E5] rounded-full blur-2xl opacity-20 bottom-0 right-0 animate-ping"></div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      {/* NAVBAR */}
+      <nav className="sticky top-0 z-20 backdrop-blur-lg bg-white/30 border-b border-white/20 shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+          <h1 className="text-2xl font-bold text-[#1E293B]">
+            Cold<span className="text-[#38b2ac]">Reach</span>
+          </h1>
+
+          <SignedOut>
+            <div className="flex gap-4">
+              <SignInButton mode="modal">
+                <Button variant="outline" className="border-[#38b2ac] text-[#38b2ac] hover:bg-[#38b2ac]/10">
+                  Sign In
+                </Button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <Button className="bg-[#38b2ac] text-white hover:bg-[#2c9c96]">
+                  Sign Up
+                </Button>
+              </SignUpButton>
+            </div>
+          </SignedOut>
+
+          <SignedIn>
+            <div className="flex items-center gap-4">
+              <Link href="/dashboard">
+                <Button className="bg-[#38b2ac] text-white hover:bg-[#2c9c96]">Dashboard</Button>
+              </Link>
+              <UserButton afterSignOutUrl="/" />
+            </div>
+          </SignedIn>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </nav>
+
+      {/* HERO SECTION */}
+      <section className="py-24 px-6 text-center relative z-10">
+        <h1 className="text-5xl md:text-6xl font-extrabold text-[#1E293B] drop-shadow mb-6">
+          Send Cold Emails That <span className="text-[#38b2ac]">Convert</span>
+        </h1>
+        <p className="text-xl text-[#475569] max-w-2xl mx-auto mb-10">
+          ColdReach helps founders and sales pros send AI-personalized cold emails that actually get replies — all automated, all in one place.
+        </p>
+        <SignedOut>
+          <SignUpButton mode="modal">
+            <Button size="lg" className="px-8 py-6 text-lg bg-[#38b2ac] text-white hover:bg-[#2c9c96]">
+              Get Started Free →
+            </Button>
+          </SignUpButton>
+        </SignedOut>
+        <SignedIn>
+          <Link href="/dashboard">
+            <Button size="lg" className="px-8 py-6 text-lg bg-[#38b2ac] text-white hover:bg-[#2c9c96]">
+              Go to Dashboard →
+            </Button>
+          </Link>
+        </SignedIn>
+      </section>
+
+      {/* STEPS TO USE */}
+      <section className="max-w-6xl mx-auto px-6 py-16">
+        <h2 className="text-3xl font-bold text-center text-[#1E293B] mb-12">
+          How It Works
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Step 1 */}
+          <div className="backdrop-blur-lg bg-white/40 border border-white/20 shadow-xl rounded-xl p-6 text-center">
+            <Sparkles className="mx-auto mb-4 text-[#38b2ac]" size={36} />
+            <h3 className="text-xl font-semibold mb-2">Generate Emails with AI</h3>
+            <p className="text-[#475569]">
+              Input your product, audience, and let AI craft high-converting outreach emails.
+            </p>
+          </div>
+
+          {/* Step 2 */}
+          <div className="backdrop-blur-lg bg-white/40 border border-white/20 shadow-xl rounded-xl p-6 text-center">
+            <Settings2 className="mx-auto mb-4 text-[#38b2ac]" size={36} />
+            <h3 className="text-xl font-semibold mb-2">Create Campaign Sequences</h3>
+            <p className="text-[#475569]">
+              Design automated email sequences with delays, follow-ups, and personalization.
+            </p>
+          </div>
+
+          {/* Step 3 */}
+          <div className="backdrop-blur-lg bg-white/40 border border-white/20 shadow-xl rounded-xl p-6 text-center">
+            <BarChart className="mx-auto mb-4 text-[#38b2ac]" size={36} />
+            <h3 className="text-xl font-semibold mb-2">Track Replies & Improve</h3>
+            <p className="text-[#475569]">
+              Analyze open/reply rates and optimize messaging with AI recommendations.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* FINAL CTA */}
+      <section className="py-20 px-6 text-center">
+        <h2 className="text-4xl font-bold text-[#1E293B] mb-6">
+          Start Reaching the Right People Today.
+        </h2>
+        <p className="text-lg text-[#475569] mb-10">
+          Your next customer is one email away. Let ColdReach help you craft the perfect one.
+        </p>
+
+        <SignedOut>
+          <SignUpButton mode="modal">
+            <Button className="text-lg px-8 py-5 bg-[#38b2ac] text-white hover:bg-[#2c9c96]">
+              Get Started Free →
+            </Button>
+          </SignUpButton>
+        </SignedOut>
+        <SignedIn>
+          <Link href="/app">
+            <Button className="text-lg px-8 py-5 bg-[#38b2ac] text-white hover:bg-[#2c9c96]">
+              Go to Dashboard →
+            </Button>
+          </Link>
+        </SignedIn>
+      </section>
     </div>
-  );
+  )
 }
