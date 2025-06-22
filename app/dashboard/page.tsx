@@ -1,10 +1,12 @@
 // app/dashboard/page.tsx
-
+'use client'
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { useSyncUser } from "@/lib/syncUser"
 
 export default function DashboardPage() {
+  useSyncUser()
   return (
     <div>
       <h2 className="text-4xl font-bold mb-4">Welcome back 👋</h2>

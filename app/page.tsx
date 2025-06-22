@@ -10,8 +10,10 @@ import {
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Sparkles, Mail, Settings2, BarChart } from 'lucide-react'
+import { useSyncUser } from '@/lib/syncUser'
 
 export default function Home() {
+  useSyncUser()
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-[#B8FFF2] to-[#A0E7E5] relative overflow-hidden">
       {/* Background visual elements */}

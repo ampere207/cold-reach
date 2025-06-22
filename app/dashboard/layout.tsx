@@ -1,5 +1,5 @@
 // app/dashboard/layout.tsx
-
+'use client'
 import { ReactNode } from "react"
 import Link from "next/link"
 import { UserButton } from "@clerk/nextjs"
@@ -11,6 +11,7 @@ import {
   Sparkles,
   Send,
 } from "lucide-react"
+import { useSyncUser } from "@/lib/syncUser"
 
 const navLinks = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Overview" },
@@ -22,6 +23,7 @@ const navLinks = [
 ]
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
+  useSyncUser()
   return (
     <div className="flex min-h-screen text-[#1E293B]">
       {/* Sidebar */}

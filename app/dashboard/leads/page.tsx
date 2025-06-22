@@ -1,24 +1,62 @@
-// app/dashboard/leads/page.tsx
 'use client'
 
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useState } from 'react'
 import Papa from 'papaparse'
+import { createSupabaseBrowserClient } from '@/lib/supabase'
+import { useUser } from '@clerk/nextjs'
 
 export default function LeadsPage() {
   const [leads, setLeads] = useState<any[]>([])
+  const [userUuid, setUserUuid] = useState<string | null>(null)
 
-  const handleCSVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const { user } = useUser()
+  const supabase = createSupabaseBrowserClient()
+
+  // 🧭 Map Clerk ID to Supabase UUID
+  useEffect(() => {
+    const mapClerkToSupabaseUser = async () => {
+      if (!user) return
+
+      const { data, error } = await supabase
+        .from('users')
+        .select('id')
+        .eq('id', user.id)
+        .single()
+
+      if (data?.id) setUserUuid(data.id)
+      else console.error('Supabase user not found for Clerk ID:', error?.message)
+    }
+
+    mapClerkToSupabaseUser()
+  }, [user])
+
+  // 📥 CSV Upload Handler
+  const handleCSVUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
-      complete: (results) => {
-        setLeads(results.data as any[])
+      complete: async (results) => {
+        const parsedLeads = results.data as any[]
+        setLeads(parsedLeads)
+
+        if (!userUuid) return alert('User not loaded.')
+
+        const leadsToInsert = parsedLeads.map((lead) => ({
+          user_id: userUuid,
+          name: lead.name,
+          email: lead.email,
+          linkedin_url: lead.linkedin_url || '',
+          scraped_data: {}, // default value
+        }))
+
+        const { error } = await supabase.from('leads').insert(leadsToInsert)
+        if (error) console.error('Insert error:', error.message)
       },
     })
   }

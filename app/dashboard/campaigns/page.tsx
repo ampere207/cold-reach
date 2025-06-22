@@ -1,19 +1,84 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { createSupabaseBrowserClient } from '@/lib/supabase'
+import { useUser } from '@clerk/nextjs'
 
 export default function CampaignsPage() {
   const [campaignName, setCampaignName] = useState('')
   const [selectedSequence, setSelectedSequence] = useState('')
   const [targetAudience, setTargetAudience] = useState('')
+  const [sequences, setSequences] = useState<any[]>([])
 
-  const handleLaunch = () => {
-    alert(`Campaign "${campaignName}" launched with sequence "${selectedSequence}" targeting ${targetAudience}`)
+  const [userUuid, setUserUuid] = useState<string | null>(null)
+
+  const { user } = useUser()
+  const supabase = createSupabaseBrowserClient()
+
+  // 🧠 Map Clerk ID to Supabase UUID
+  useEffect(() => {
+    const mapClerkToSupabaseUser = async () => {
+      if (!user) return
+
+      const { data, error } = await supabase
+        .from('users')
+        .select('id')
+        .eq('id', user.id)
+        .single()
+
+      if (data?.id) setUserUuid(data.id)
+      else console.error('Supabase user not found for Clerk ID:', error?.message)
+    }
+
+    mapClerkToSupabaseUser()
+  }, [user])
+
+  // 📨 Fetch sequences belonging to user
+  useEffect(() => {
+    const fetchSequences = async () => {
+      if (!userUuid) return
+
+      const { data, error } = await supabase
+        .from('sequences')
+        .select('id, name')
+        .eq('user_id', userUuid)
+
+      if (!error && data) {
+        setSequences(data)
+      } else if (error) {
+        console.error('[Fetch Sequences Error]', error.message)
+      }
+    }
+
+    fetchSequences()
+  }, [userUuid])
+
+  // 🚀 Launch Campaign
+  const handleLaunch = async () => {
+    if (!userUuid) return alert('You must be logged in.')
+    if (!selectedSequence) return alert('Please select a sequence.')
+
+    const { error } = await supabase.from('campaigns').insert({
+      user_id: userUuid,
+      name: campaignName,
+      sequence_id: selectedSequence,
+      audience_description: targetAudience,
+    })
+
+    if (error) {
+      console.error('[Launch Campaign Error]', error.message)
+      alert('Failed to launch campaign.')
+    } else {
+      alert(`Campaign "${campaignName}" launched successfully!`)
+      setCampaignName('')
+      setSelectedSequence('')
+      setTargetAudience('')
+    }
   }
 
   return (
@@ -33,11 +98,18 @@ export default function CampaignsPage() {
 
           <div>
             <Label>Select Email Sequence</Label>
-            <Input
+            <select
+              className="w-full p-2 rounded-md border bg-white/70 text-sm"
               value={selectedSequence}
               onChange={(e) => setSelectedSequence(e.target.value)}
-              placeholder="e.g., Follow-up Sequence 1"
-            />
+            >
+              <option value="">-- Select a Sequence --</option>
+              {sequences.map((seq) => (
+                <option key={seq.id} value={seq.id}>
+                  {seq.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div>
@@ -50,7 +122,10 @@ export default function CampaignsPage() {
             />
           </div>
 
-          <Button onClick={handleLaunch} className="bg-[#38b2ac] text-white hover:bg-[#2c9c96]">
+          <Button
+            onClick={handleLaunch}
+            className="bg-[#38b2ac] text-white hover:bg-[#2c9c96]"
+          >
             Launch Campaign 🚀
           </Button>
         </CardContent>
