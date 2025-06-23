@@ -18,22 +18,19 @@ export default function TemplatesPage() {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [openDialog, setOpenDialog] = useState(false)
-
   const [userUuid, setUserUuid] = useState<string | null>(null)
 
   const router = useRouter()
   const { user } = useUser()
   const supabase = createSupabaseBrowserClient()
 
-  // 🧠 Map Clerk ID to Supabase UUID
   useEffect(() => {
     const mapClerkToSupabaseUser = async () => {
       if (!user) return
-
       const { data, error } = await supabase
         .from('users')
         .select('id')
-        .eq('id', user.id) // since you're now inserting Clerk user.id directly as users.id
+        .eq('id', user.id)
         .single()
 
       if (data?.id) setUserUuid(data.id)
@@ -45,35 +42,149 @@ export default function TemplatesPage() {
 
   const handleCopy = () => {
     navigator.clipboard.writeText(template)
-    alert('Email copied to clipboard!')
+    alert('message copied to clipboard!')
   }
 
-  const generateMessage = async () => {
-    setLoading(true)
-    setTemplate('')
+  const fetchLinkedInData = async (url: string) => {
+  try {
+    const res = await fetch('/api/linkedin-scraper', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ linkedinUrl: url }),
+    })
 
-    setTimeout(async () => {
-      const dummyData = `Hi [First Name],\n\nI came across your LinkedIn profile and was really impressed by your work at [Company]. Based on your background in [Industry], I think our product could genuinely help with ${motive}.\n\nWould love to connect and share more details.\n\nBest regards,\nTeam ColdReach`
-      setTemplate(dummyData)
-      setEmail('target@example.com')
-      setLoading(false)
+    if (!res.ok) {
+      console.error('❌ LinkedIn fetch failed:', res.status)
+      return null
+    }
 
-      if (userUuid) {
-        const { error } = await supabase.from('templates').insert({
-          user_id: userUuid,
-          motive,
-          content: dummyData,
-          recipient_email: 'target@example.com',
-        })
-        if (error) console.error('[Insert Error]', error.message)
-      }
-    }, 1500)
+    const json = await res.json()
+    const profile = json.data
+
+    if (!profile) {
+      console.error('❌ No profile data in response')
+      return null
+    }
+
+    return {
+      full_name: profile.full_name || `${profile.first_name} ${profile.last_name}` || 'there',
+      current_company: profile.company || 'your company',
+      industry: profile.company_industry || 'your industry',
+      email: profile.email || '',
+      job_title: profile.job_title || '',
+      location: profile.location || '',
+      headline: profile.headline || '',
+      data: profile.data || '',
+    }
+  } catch (err) {
+    console.error('❌ LinkedIn API Fetch Error:', err)
+    return null
+  }
+}
+
+const fetchExtraLinkedInData = async (url: string) => {
+  try {
+    const res = await fetch('/api/linkedin-scraper2', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ linkedinUrl: url }),
+    })
+
+    if (!res.ok) return null
+    const json = await res.json()
+    return {
+      certifications: json.data?.certifications || [],
+      awards: json.data?.honors || [],
+      publications: json.data?.publications || [],
+    }
+  } catch (err) {
+    console.error('❌ LinkedIn Extra Fetch Error:', err)
+    return null
+  }
+}
+
+const fetchRecommendationsGiven = async (linkedinUrl: string) => {
+  const res = await fetch('/api/linkedin-scraper3', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ linkedinUrl }),
+  })
+  const json = await res.json()
+  return json.data || []
+}
+
+const fetchRecommendationsReceived = async (linkedinUrl: string) => {
+  const res = await fetch('/api/linkedin-scraper4', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ linkedinUrl }),
+  })
+  const json = await res.json()
+  return json.data || []
+}
+
+
+
+const generateMessage = async () => {
+  setLoading(true)
+  setTemplate('')
+
+  const scrapedData = await fetchLinkedInData(linkedinUrl)
+  const extras = await fetchExtraLinkedInData(linkedinUrl)
+  const recommendationsGiven = await fetchRecommendationsGiven(linkedinUrl)
+  const recommendationsReceived = await fetchRecommendationsReceived(linkedinUrl)
+
+  if (!scrapedData || !extras) {
+    alert('Failed to fetch LinkedIn data. Try again.')
+    setLoading(false)
+    return
   }
 
-  const redirectToEmailGen = () => {
-    const query = new URLSearchParams({ email, content: template }).toString()
-    router.push(`/dashboard/templates/email-gen?${query}`)
+  const fullProfile = {
+    ...scrapedData,
+    ...extras,
+    ...recommendationsGiven,
+    ...recommendationsReceived,
+    linkedin_url: linkedinUrl,
   }
+
+  try {
+    const res = await fetch('/api/generate-message', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ profile: fullProfile, motive }),
+    })
+
+    const data = await res.json()
+
+    if (res.ok && data.message) {
+      setTemplate(data.message)
+    } else {
+      setTemplate('Could not generate message. Please try again.')
+      console.error('[Gemini Error]', data.error)
+    }
+
+    setEmail(scrapedData.email || 'target@example.com')
+
+    if (userUuid) {
+      const { error } = await supabase.from('templates').insert({
+        user_id: userUuid,
+        motive,
+        content: data.message || 'Generation failed.',
+        recipient_email: scrapedData.email || 'target@example.com',
+        scraped_data: fullProfile,
+      })
+      if (error) console.error('[Insert Error]', error.message)
+    }
+  } catch (error) {
+    console.error('❌ Error calling Gemini API route:', error)
+    setTemplate('Could not generate message. Please try again.')
+  } finally {
+    setLoading(false)
+  }
+}
+
+
 
   return (
     <div>
@@ -83,15 +194,29 @@ export default function TemplatesPage() {
         <CardContent className="p-6 space-y-4">
           <div className="space-y-2">
             <Label htmlFor="linkedin">LinkedIn Profile URL</Label>
-            <Input id="linkedin" placeholder="https://www.linkedin.com/in/example" value={linkedinUrl} onChange={(e) => setLinkedinUrl(e.target.value)} />
+            <Input
+              id="linkedin"
+              placeholder="https://www.linkedin.com/in/example"
+              value={linkedinUrl}
+              onChange={(e) => setLinkedinUrl(e.target.value)}
+            />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="motive">Motive of Outreach</Label>
-            <Input id="motive" placeholder="e.g., offer a partnership, discuss a job opportunity..." value={motive} onChange={(e) => setMotive(e.target.value)} />
+            <Input
+              id="motive"
+              placeholder="e.g., offer a partnership, discuss a job opportunity..."
+              value={motive}
+              onChange={(e) => setMotive(e.target.value)}
+            />
           </div>
 
-          <Button onClick={generateMessage} className="bg-[#38b2ac] text-white hover:bg-[#2c9c96]" disabled={loading || !linkedinUrl || !motive}>
+          <Button
+            onClick={generateMessage}
+            className="bg-[#38b2ac] text-white hover:bg-[#2c9c96]"
+            disabled={loading || !linkedinUrl || !motive}
+          >
             {loading ? 'Generating...' : 'Generate Message'}
           </Button>
         </CardContent>
@@ -105,28 +230,7 @@ export default function TemplatesPage() {
             <Button onClick={handleCopy} className="bg-[#38b2ac] text-white hover:bg-[#2c9c96]">
               Copy Message
             </Button>
-            <div className="space-y-2">
-              <Label>Send to Email</Label>
-              <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-
-              <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-                <DialogTrigger asChild>
-                  <Button className="bg-[#38b2ac] text-white hover:bg-[#2c9c96]" disabled={!email || !template}>
-                    Want to email this?
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="bg-white p-6 rounded-xl shadow-xl">
-                  <h3 className="text-xl font-semibold mb-4">Proceed to Email Editor?</h3>
-                  <p className="mb-6">Do you want to view, edit and send this email to <strong>{email}</strong>?</p>
-                  <div className="flex justify-end gap-4">
-                    <Button variant="outline" onClick={() => setOpenDialog(false)}>Cancel</Button>
-                    <Button onClick={redirectToEmailGen} className="bg-[#38b2ac] text-white hover:bg-[#2c9c96]">
-                      Yes, Open Editor
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </div>
+          
           </CardContent>
         </Card>
       )}
