@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
 import { useUser } from '@clerk/nextjs'
+import { Loader2 } from 'lucide-react'
 
 export default function TemplatesPage() {
   const [linkedinUrl, setLinkedinUrl] = useState('')
@@ -39,7 +40,6 @@ export default function TemplatesPage() {
     mapClerkToSupabaseUser()
   }, [user])
 
-  // Fetch campaigns
   useEffect(() => {
     const fetchCampaigns = async () => {
       if (!userUuid) return
@@ -240,17 +240,45 @@ export default function TemplatesPage() {
             </select>
           </div>
 
-          <Button
-            onClick={generateMessage}
-            className="bg-[#38b2ac] text-white hover:bg-[#2c9c96]"
-            disabled={loading || !linkedinUrl || !motive}
-          >
-            {loading ? 'Generating...' : 'Generate Message'}
-          </Button>
+          <div className="space-y-2">
+            <Button
+              onClick={generateMessage}
+              className="bg-[#38b2ac] text-white hover:bg-[#2c9c96] w-full"
+              disabled={loading || !linkedinUrl || !motive}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                  Generating Message...
+                </>
+              ) : (
+                'Generate Message'
+              )}
+            </Button>
 
-          {loadingStage && (
-            <p className="text-sm text-gray-600 italic mt-2">{loadingStage}</p>
-          )}
+            {loading && (
+              <div className="mt-4 p-4 rounded-lg border border-white/20 bg-white/30 backdrop-blur-md shadow-sm">
+                <div className="text-sm font-medium text-[#334155] mb-2">
+                  {loadingStage}
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2.5">
+                  <div
+                    className={`h-2.5 rounded-full transition-all duration-700 ease-in-out ${
+                      loadingStage.includes('Profile')
+                        ? 'w-[25%] bg-[#38b2ac]'
+                        : loadingStage.includes('Extra')
+                        ? 'w-[50%] bg-[#2d9c96]'
+                        : loadingStage.includes('Recommendations')
+                        ? 'w-[75%] bg-[#2a8b89]'
+                        : loadingStage.includes('Generating')
+                        ? 'w-[100%] bg-[#267c7c]'
+                        : 'w-[0%]'
+                    }`}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
         </CardContent>
       </Card>
 

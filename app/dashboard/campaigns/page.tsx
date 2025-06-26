@@ -15,6 +15,7 @@ interface Campaign {
   name: string
   audience_description: string
   created_at: string
+  status?: 'ongoing' | 'halted' | 'completed' | null
 }
 
 export default function CampaignsPage() {
@@ -154,21 +155,57 @@ export default function CampaignsPage() {
       ) : (
         <div className="space-y-4">
           {campaigns.map((c) => (
-            <Card
-              key={c.id}
-              className="bg-white/40 backdrop-blur-lg border border-white/30 shadow-md"
-            >
-              <CardContent className="p-5 space-y-2">
-                <div className="font-semibold text-lg">{c.name}</div>
-                <div className="text-sm italic text-[#444]">
-                  {c.audience_description}
-                </div>
-                <div className="text-sm text-gray-600">
-                  Created: {new Date(c.created_at).toLocaleString()}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+  <Card
+  key={c.id}
+  className="bg-white/40 backdrop-blur-lg border border-white/30 shadow-md"
+>
+  <CardContent className="p-5 space-y-2">
+    <div className="flex justify-between items-center">
+      <div className="font-semibold text-lg">{c.name}</div>
+
+      {/* 🔽 Dropdown for status update */}
+      <select
+        value={c.status ?? ''}
+        onChange={async (e) => {
+          const newStatus = e.target.value as Campaign['status']
+          const { error } = await supabase
+            .from('campaigns')
+            .update({ status: newStatus })
+            .eq('id', c.id)
+
+          if (!error) {
+            // Update UI locally
+            setCampaigns((prev) =>
+              prev.map((camp) =>
+                camp.id === c.id ? { ...camp, status: newStatus } : camp
+              )
+            )
+          } else {
+            console.error('Update status error:', error.message)
+            alert('Failed to update status')
+          }
+        }}
+        className={`text-xs px-2 py-1 rounded-md border border-gray-300 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#38b2ac]`}
+      >
+        <option value="">Set Status</option>
+        <option value="ongoing">Ongoing</option>
+        <option value="halted">Halted</option>
+        <option value="completed">Completed</option>
+      </select>
+    </div>
+
+    <div className="text-sm italic text-[#444]">
+      {c.audience_description}
+    </div>
+
+    <div className="text-sm text-gray-600">
+      Created: {new Date(c.created_at).toLocaleString()}
+    </div>
+  </CardContent>
+</Card>
+
+))}
+
         </div>
       )}
     </div>
