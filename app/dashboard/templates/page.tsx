@@ -196,106 +196,115 @@ export default function TemplatesPage() {
   }
 
   return (
-    <div>
-      <h2 className="text-4xl font-bold mb-6">AI-Personalized Outreach</h2>
+    <div className='py-8'>
+      <h2 className="text-4xl font-bold mb-6 flex justify-center">Generate Cold Message</h2>
 
-      <Card className="bg-white/40 backdrop-blur-lg border border-white/30 shadow-md mb-8">
-        <CardContent className="p-6 space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="linkedin">LinkedIn Profile URL</Label>
-            <Input
-              id="linkedin"
-              placeholder="https://www.linkedin.com/in/example"
-              value={linkedinUrl}
-              onChange={(e) => setLinkedinUrl(e.target.value)}
-            />
-          </div>
+       <Card className="bg-white/40 backdrop-blur-lg border border-white/30 shadow-md mb-8">
+    <CardContent className="p-6 space-y-4">
+      {/* Inputs */}
+      <div className="space-y-2">
+        <Label htmlFor="linkedin" className="text-base font-medium">
+          LinkedIn Profile URL
+        </Label>
+        <Input
+          id="linkedin"
+          value={linkedinUrl}
+          onChange={(e) => setLinkedinUrl(e.target.value)}
+          placeholder="https://www.linkedin.com/in/example"
+        />
+      </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="motive">Motive of Outreach</Label>
-            <Input
-              id="motive"
-              placeholder="e.g., offer a partnership, discuss a job opportunity..."
-              value={motive}
-              onChange={(e) => setMotive(e.target.value)}
-            />
-          </div>
+      <div className="space-y-2">
+        <Label htmlFor="motive" className="text-base font-medium">
+          Motive of Outreach
+        </Label>
+        <Input
+          id="motive"
+          value={motive}
+          onChange={(e) => setMotive(e.target.value)}
+          placeholder="e.g., discuss a role, offer a partnership..."
+        />
+      </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="campaign">Assign to Campaign</Label>
-            <select
-              id="campaign"
-              className="w-full p-2 rounded-md border bg-white/70 text-sm"
-              value={selectedCampaign || ''}
-              onChange={(e) =>
-                setSelectedCampaign(e.target.value === '' ? null : e.target.value)
-              }
-            >
-              <option value="">None</option>
-              {campaigns.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </div>
+      <div className="space-y-2">
+        <Label htmlFor="campaign" className="text-base font-medium">
+          Assign to Campaign
+        </Label>
+        <select
+          id="campaign"
+          className="w-full p-2 rounded-md border bg-white/70 text-sm"
+          value={selectedCampaign || ''}
+          onChange={(e) =>
+            setSelectedCampaign(e.target.value === '' ? null : e.target.value)
+          }
+        >
+          <option value="">None</option>
+          {campaigns.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+      </div>
 
-          <div className="space-y-2">
-            <Button
-              onClick={generateMessage}
-              className="bg-[#38b2ac] text-white hover:bg-[#2c9c96] w-full"
-              disabled={loading || !linkedinUrl || !motive}
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="animate-spin mr-2 h-4 w-4" />
-                  Generating Message...
-                </>
-              ) : (
-                'Generate Message'
-              )}
-            </Button>
+      <div className="flex justify-center">
+        <Button
+          onClick={generateMessage}
+          className="bg-[#38b2ac] text-white text-base font-semibold px-8 py-3 rounded-xl shadow-md hover:bg-[#2c9c96] hover:shadow-lg transition-all duration-300 ease-in-out disabled:opacity-50"
+          disabled={loading || !linkedinUrl || !motive}
+        >
+          {loading ? (
+            <>
+              <Loader2 className="animate-spin mr-2 h-4 w-4" />
+              Generating Message...
+            </>
+          ) : (
+            'Generate Message'
+          )}
+        </Button>
+      </div>
+    </CardContent>
+  </Card>
 
-            {loading && (
-              <div className="mt-4 p-4 rounded-lg border border-white/20 bg-white/30 backdrop-blur-md shadow-sm">
-                <div className="text-sm font-medium text-[#334155] mb-2">
-                  {loadingStage}
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2.5">
-                  <div
-                    className={`h-2.5 rounded-full transition-all duration-700 ease-in-out ${
-                      loadingStage.includes('Profile')
-                        ? 'w-[25%] bg-[#38b2ac]'
-                        : loadingStage.includes('Extra')
-                        ? 'w-[50%] bg-[#2d9c96]'
-                        : loadingStage.includes('Recommendations')
-                        ? 'w-[75%] bg-[#2a8b89]'
-                        : loadingStage.includes('Generating')
-                        ? 'w-[100%] bg-[#267c7c]'
-                        : 'w-[0%]'
-                    }`}
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+  {/* 🔄 FULL-WIDTH LOADING PROGRESS (Below form card) */}
+  {loading && (
+    <div className="mb-8 p-6 rounded-lg border border-white/20 bg-white/30 backdrop-blur-md shadow-md w-full">
+      <div className="text-sm font-medium text-gray-800 mb-2 text-center">
+        {loadingStage}
+      </div>
+      <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+        <div
+          className={`h-2.5 transition-all duration-700 ease-in-out ${
+            loadingStage.includes('Profile')
+              ? 'w-[25%] bg-[#38b2ac]'
+              : loadingStage.includes('Extra')
+              ? 'w-[50%] bg-[#2d9c96]'
+              : loadingStage.includes('Recommendations')
+              ? 'w-[75%] bg-[#2a8b89]'
+              : loadingStage.includes('Generating')
+              ? 'w-[100%] bg-[#267c7c]'
+              : 'w-[0%]'
+          }`}
+        />
+      </div>
+    </div>
+  )}
 
-      {template && (
-        <Card className="bg-white/40 backdrop-blur-lg border border-white/30 shadow-md">
-          <CardContent className="p-6 space-y-4">
-            <h3 className="text-xl font-semibold">Generated Message</h3>
-            <Textarea value={template} rows={10} readOnly />
-            <Button
-              onClick={handleCopy}
-              className="bg-[#38b2ac] text-white hover:bg-[#2c9c96]"
-            >
-              Copy Message
-            </Button>
-          </CardContent>
-        </Card>
-      )}
+  {/* 📩 GENERATED MESSAGE */}
+  {template && (
+    <Card className="bg-white/40 backdrop-blur-lg border border-white/30 shadow-md">
+      <CardContent className="p-6 space-y-4">
+        <h3 className="text-xl font-semibold">Generated Message</h3>
+        <Textarea value={template} rows={10} readOnly />
+        <Button
+          onClick={handleCopy}
+          className="bg-[#38b2ac] text-white hover:bg-[#2c9c96]"
+        >
+          Copy Message
+        </Button>
+      </CardContent>
+    </Card>
+  )}
     </div>
   )
 }

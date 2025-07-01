@@ -13,11 +13,11 @@ export function useSyncUser() {
  useEffect(() => {
   const sync = async () => {
     if (!user) {
-      console.log('No Clerk user found')
+     // console.log('No Clerk user found')
       return
     }
 
-    console.log('Syncing user:', user)
+    //console.log('Syncing user:', user)
 
     const { data, error } = await supabase
       .from('users')
@@ -25,7 +25,7 @@ export function useSyncUser() {
       .eq('id', user.id)
       .maybeSingle()
 
-    console.log('Existing user check:', data, error)
+    //console.log('Existing user check:', data, error)
 
     if (!data) {
       const { error: insertError } = await supabase.from('users').upsert({
@@ -38,11 +38,11 @@ export function useSyncUser() {
   })
 
 if (insertError) {
-  console.error('❌ Failed to insert user:', JSON.stringify(insertError, null, 2))
-  alert(`Insert failed: ${insertError.message || 'Unknown Supabase error'}`)
+ // console.error('❌ Failed to insert user:', JSON.stringify(insertError, null, 2))
+  //alert(`Insert failed: ${insertError.message || 'Unknown Supabase error'}`)
 }
 else {
-        console.log('User inserted successfully')
+      //  console.log('User inserted successfully')
       }
     }
   }

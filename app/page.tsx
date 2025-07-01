@@ -35,7 +35,7 @@ export default function Home() {
 
       {/* Navbar */}
       <nav className="sticky top-0 z-20 backdrop-blur-lg bg-white/30 border-b border-white/20 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <div className="px-8 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold">
             Cold<span className="text-[#38b2ac]">Reach</span>
           </h1>
@@ -72,7 +72,7 @@ export default function Home() {
           Supercharge Your <span className="text-[#38b2ac]">Cold Outreach</span> with AI
         </h1>
         <p className="text-xl max-w-2xl mx-auto text-[#475569] mb-10">
-          ColdReach helps founders and sales pros generate hyper-personalized emails using AI, backed by real LinkedIn data.
+          ColdReach helps founders and sales pros generate hyper-personalized cold messages and emails using AI, backed by real LinkedIn data.
         </p>
         <SignedOut>
           <SignUpButton mode="modal">
@@ -104,18 +104,18 @@ export default function Home() {
       <section className="bg-white/50 backdrop-blur-xl py-20 px-6">
         <h2 className="text-3xl font-bold text-center mb-12">Why ColdReach?</h2>
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-          <FeatureCard icon={<Sparkles size={28} />} title="AI Personalization" desc="Emails that feel handcrafted and warm." />
-          <FeatureCard icon={<Settings2 size={28} />} title="Campaign Automation" desc="Build sequences and follow-ups effortlessly." />
-          <FeatureCard icon={<BarChart size={28} />} title="Lead Analytics" desc="View replies, clicks and optimize campaigns." />
-          <FeatureCard icon={<TrendingUp size={28} />} title="Conversion Focused" desc="Designed to get replies, not just sends." />
+          <FeatureCard icon={<Sparkles size={34} />} title="AI Personalization" desc="Emails that feel handcrafted and warm." />
+          <FeatureCard icon={<Settings2 size={34} />} title="Campaign Automation" desc="Build sequences and follow-ups effortlessly." />
+          <FeatureCard icon={<BarChart size={34} />} title="Lead Analytics" desc="View replies, clicks and optimize campaigns." />
+          <FeatureCard icon={<TrendingUp size={34} />} title="Conversion Focused" desc="Designed to get replies, not just sends." />
         </div>
       </section>
 
       {/* Final CTA */}
       <section className="py-20 px-6 text-center">
-        <h2 className="text-4xl font-bold mb-4">Your Next Client is One Email Away.</h2>
+        <h2 className="text-4xl font-bold mb-4">Your Next Client is One Text Away.</h2>
         <p className="text-lg text-[#475569] mb-8">
-          Let ColdReach help you craft the perfect cold email and close the deal.
+          Let ColdReach help you craft the perfect cold message and close the deal.
         </p>
         <SignedOut>
           <SignUpButton mode="modal">
@@ -151,8 +151,8 @@ function FeatureCard({ icon, title, desc }: { icon: ReactNode; title: string; de
   return (
     <div className="bg-white/40 backdrop-blur-lg border border-white/30 rounded-xl p-6 shadow-md hover:shadow-xl hover:scale-105 transition-transform duration-300">
       <div className="text-[#38b2ac] mb-3">{icon}</div>
-      <h3 className="text-lg font-semibold mb-1">{title}</h3>
-      <p className="text-sm text-[#475569]">{desc}</p>
+      <h3 className="text-xl font-semibold mb-2">{title}</h3>
+      <p className="text-[#475569]">{desc}</p>
     </div>
   )
 }

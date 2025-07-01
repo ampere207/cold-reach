@@ -1,24 +1,41 @@
-// app/api/linkedin-scraper4/route.ts
 import { NextRequest, NextResponse } from 'next/server'
+
+const RAPIDAPI_HOST = 'fresh-linkedin-profile-data.p.rapidapi.com'
+
+const buildApiUrl = (linkedinUrl: string) => {
+  const encodedUrl = encodeURIComponent(linkedinUrl)
+  return `https://${RAPIDAPI_HOST}/get-recommendations-received?linkedin_url=${encodedUrl}`
+}
+
+const fetchRecommendations = async (url: string, apiKey: string) => {
+  return await fetch(url, {
+    method: 'GET',
+    headers: {
+      'x-rapidapi-key': apiKey,
+      'x-rapidapi-host': RAPIDAPI_HOST,
+    },
+  })
+}
 
 export async function POST(req: NextRequest) {
   const { linkedinUrl } = await req.json()
 
-  const encodedUrl = encodeURIComponent(linkedinUrl)
-  const apiUrl = `https://fresh-linkedin-profile-data.p.rapidapi.com/get-recommendations-received?linkedin_url=${encodedUrl}`
+  const apiUrl = buildApiUrl(linkedinUrl)
+  const primaryKey = process.env.RAPIDAPI_KEY || ''
+  const fallbackKey = process.env.RAPIDAPI_KEY_FALLBACK || ''
 
   try {
-    const res = await fetch(apiUrl, {
-      method: 'GET',
-      headers: {
-        'x-rapidapi-key': process.env.RAPIDAPI_KEY || '',
-        'x-rapidapi-host': 'fresh-linkedin-profile-data.p.rapidapi.com',
-      },
-    })
+    let res = await fetchRecommendations(apiUrl, primaryKey)
+
+    if (!res.ok && [403, 429].includes(res.status) && fallbackKey) {
+      console.warn(`⚠️ Primary API key failed (status ${res.status}). Retrying with fallback key...`)
+      res = await fetchRecommendations(apiUrl, fallbackKey)
+    }
 
     if (!res.ok) {
-      console.error('❌ LinkedIn Recommendations Received API Error:', res.status)
-      return NextResponse.json({ error: 'LinkedIn recommendations-received fetch failed' }, { status: res.status })
+      const text = await res.text()
+      console.error('❌ LinkedIn Recommendations Received API Error:', res.status, text)
+      return NextResponse.json({ error: text }, { status: res.status })
     }
 
     const data = await res.json()

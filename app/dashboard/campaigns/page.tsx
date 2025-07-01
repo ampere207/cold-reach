@@ -104,110 +104,114 @@ export default function CampaignsPage() {
 
     setLaunching(false)
   }
+return (
+  <div className="w-full px-4 sm:px-10 py-8">
+    <h2 className="text-4xl font-bold mb-8 text-center text-[#1f2937]">
+      📣 Campaign Manager
+    </h2>
 
-  return (
-    <div>
-      <h2 className="text-4xl font-bold mb-6">📣 Campaigns</h2>
+    {/* Launch Campaign Card */}
+    <Card className="bg-white/30 backdrop-blur-lg border border-white/20 shadow-lg rounded-2xl mb-10">
+      <CardContent className="p-6 space-y-6">
+        <div className="space-y-2">
+          <Label className="text-base text-gray-800">Campaign Name</Label>
+          <Input
+            value={campaignName}
+            onChange={(e) => setCampaignName(e.target.value)}
+            placeholder="e.g., Fintech Founders Outreach"
+            className="bg-white/60 backdrop-blur-sm border border-gray-300 rounded-lg px-4 py-2"
+          />
+        </div>
 
-      <Card className="bg-white/40 backdrop-blur-lg border border-white/30 shadow-md mb-10">
-        <CardContent className="p-6 space-y-4">
-          <div>
-            <Label>Campaign Name</Label>
-            <Input
-              value={campaignName}
-              onChange={(e) => setCampaignName(e.target.value)}
-              placeholder="e.g., Fintech Founders Outreach"
-            />
-          </div>
+        <div className="space-y-2">
+          <Label className="text-base text-gray-800 font-medium">Target Audience</Label>
+          <Textarea
+            rows={3}
+            value={targetAudience}
+            onChange={(e) => setTargetAudience(e.target.value)}
+            placeholder="e.g., Founders of B2B SaaS companies in India"
+            className="bg-white/60 backdrop-blur-sm border border-gray-300 rounded-lg px-4 py-2"
+          />
+        </div>
 
-          <div>
-            <Label>Target Audience Description</Label>
-            <Textarea
-              rows={3}
-              value={targetAudience}
-              onChange={(e) => setTargetAudience(e.target.value)}
-              placeholder="e.g., Founders of B2B SaaS companies in India"
-            />
-          </div>
-
+        <div className="flex justify-center">
           <Button
             onClick={handleLaunch}
-            className="bg-[#38b2ac] text-white hover:bg-[#2c9c96]"
             disabled={launching}
+            className="bg-[#38b2ac] hover:bg-[#2c9c96] text-white px-6 py-2 text-base font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-300"
           >
             {launching ? (
               <>
-                <Loader2 className="animate-spin mr-2 h-4 w-4" /> Launching...
+                <Loader2 className="animate-spin mr-2 h-5 w-5" /> Launching...
               </>
             ) : (
               'Launch Campaign 🚀'
             )}
           </Button>
-        </CardContent>
-      </Card>
-
-      <h3 className="text-2xl font-semibold mb-4">📜 Campaign History</h3>
-
-      {loading ? (
-        <div className="text-gray-600">Loading campaigns...</div>
-      ) : campaigns.length === 0 ? (
-        <p className="text-gray-600">No campaigns launched yet.</p>
-      ) : (
-        <div className="space-y-4">
-          {campaigns.map((c) => (
-  <Card
-  key={c.id}
-  className="bg-white/40 backdrop-blur-lg border border-white/30 shadow-md"
->
-  <CardContent className="p-5 space-y-2">
-    <div className="flex justify-between items-center">
-      <div className="font-semibold text-lg">{c.name}</div>
-
-      {/* 🔽 Dropdown for status update */}
-      <select
-        value={c.status ?? ''}
-        onChange={async (e) => {
-          const newStatus = e.target.value as Campaign['status']
-          const { error } = await supabase
-            .from('campaigns')
-            .update({ status: newStatus })
-            .eq('id', c.id)
-
-          if (!error) {
-            // Update UI locally
-            setCampaigns((prev) =>
-              prev.map((camp) =>
-                camp.id === c.id ? { ...camp, status: newStatus } : camp
-              )
-            )
-          } else {
-            console.error('Update status error:', error.message)
-            alert('Failed to update status')
-          }
-        }}
-        className={`text-xs px-2 py-1 rounded-md border border-gray-300 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#38b2ac]`}
-      >
-        <option value="">Set Status</option>
-        <option value="ongoing">Ongoing</option>
-        <option value="halted">Halted</option>
-        <option value="completed">Completed</option>
-      </select>
-    </div>
-
-    <div className="text-sm italic text-[#444]">
-      {c.audience_description}
-    </div>
-
-    <div className="text-sm text-gray-600">
-      Created: {new Date(c.created_at).toLocaleString()}
-    </div>
-  </CardContent>
-</Card>
-
-))}
-
         </div>
-      )}
-    </div>
-  )
+      </CardContent>
+    </Card>
+
+    {/* Campaign History */}
+    <h3 className="text-2xl font-semibold mb-4 text-[#1f2937]">📜 Campaign History</h3>
+
+    {loading ? (
+      <div className="text-gray-500 text-center">Loading campaigns...</div>
+    ) : campaigns.length === 0 ? (
+      <p className="text-gray-500 text-center">No campaigns launched yet.</p>
+    ) : (
+      <div className="space-y-4">
+        {campaigns.map((c) => (
+          <Card
+            key={c.id}
+            className="bg-white/30 backdrop-blur-lg border border-white/20 shadow-md rounded-2xl hover:shadow-lg transition-shadow"
+          >
+            <CardContent className="p-5 space-y-3">
+              <div className="flex justify-between items-center">
+                <div className="font-semibold text-lg text-gray-800">{c.name}</div>
+
+                <select
+                  value={c.status ?? ''}
+                  onChange={async (e) => {
+                    const newStatus = e.target.value as Campaign['status']
+                    const { error } = await supabase
+                      .from('campaigns')
+                      .update({ status: newStatus })
+                      .eq('id', c.id)
+
+                    if (!error) {
+                      setCampaigns((prev) =>
+                        prev.map((camp) =>
+                          camp.id === c.id ? { ...camp, status: newStatus } : camp
+                        )
+                      )
+                    } else {
+                      console.error('Update status error:', error.message)
+                      alert('Failed to update status')
+                    }
+                  }}
+                  className="text-sm px-3 py-1 rounded-md bg-white border border-gray-300 text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#38b2ac]"
+                >
+                  <option value="">Set Status</option>
+                  <option value="ongoing">🟢 Ongoing</option>
+                  <option value="halted">🟠 Halted</option>
+                  <option value="completed">🔵 Completed</option>
+                </select>
+              </div>
+
+              <div className="text-sm text-gray-700 italic">
+                🎯 {c.audience_description}
+              </div>
+
+              <div className="text-sm text-gray-500">
+                Created: {new Date(c.created_at).toLocaleString()}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    )}
+  </div>
+)
+
 }

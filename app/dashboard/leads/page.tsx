@@ -106,7 +106,7 @@ export default function LeadsPage() {
   }, [selectedCampaignId, templates])
 
   return (
-    <div>
+    <div className='py-8'>
       <h2 className="text-4xl font-bold mb-8 text-center">📬 Lead History</h2>
 
       {/* Filter Dropdown */}
