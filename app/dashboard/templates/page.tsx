@@ -184,7 +184,7 @@ export default function TemplatesPage() {
         console.error('[Gemini Error]', data.error)
       }
 
-      setEmail(scrapedData.email || 'target@example.com')
+      //setEmail(scrapedData.email || 'target@example.com')
 
       if (userUuid) {
         const { error } = await supabase.from('templates').insert({
