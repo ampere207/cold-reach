@@ -58,7 +58,8 @@ export default function TemplatesPage() {
         .eq('status', 'ongoing')
         .order('created_at', { ascending: false })
 
-      if (!error && data) setCampaigns(data)
+      if (!error && data) {
+        setCampaigns(data as Campaign[])
     }
 
     fetchCampaigns()
