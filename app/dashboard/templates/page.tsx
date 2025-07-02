@@ -47,6 +47,7 @@ export default function TemplatesPage() {
         .from('campaigns')
         .select('id, name')
         .eq('user_id', userUuid)
+        .eq('status', 'ongoing')
         .order('created_at', { ascending: false })
 
       if (!error && data) setCampaigns(data)
