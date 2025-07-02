@@ -61,6 +61,7 @@ export default function TemplatesPage() {
       if (!error && data) {
         setCampaigns(data as Campaign[])
     }
+  }
 
     fetchCampaigns()
   }, [userUuid])
