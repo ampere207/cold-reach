@@ -197,7 +197,7 @@ export default function TemplatesPage() {
 
   return (
     <div className='py-8'>
-      <h2 className="text-4xl font-bold mb-6 flex justify-center">Generate Cold Message</h2>
+      <h2 className="text-4xl font-bold mb-6 flex justify-center">✨Generate Cold Message</h2>
 
        <Card className="bg-white/40 backdrop-blur-lg border border-white/30 shadow-md mb-8">
     <CardContent className="p-6 space-y-4">
@@ -269,7 +269,7 @@ export default function TemplatesPage() {
   {/* 🔄 FULL-WIDTH LOADING PROGRESS (Below form card) */}
   {loading && (
     <div className="mb-8 p-6 rounded-lg border border-white/20 bg-white/30 backdrop-blur-md shadow-md w-full">
-      <div className="text-sm font-medium text-gray-800 mb-2 text-center">
+      <div className="text-md font-medium text-gray-800 mb-2 text-center">
         {loadingStage}
       </div>
       <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
@@ -295,7 +295,7 @@ export default function TemplatesPage() {
     <Card className="bg-white/40 backdrop-blur-lg border border-white/30 shadow-md">
       <CardContent className="p-6 space-y-4">
         <h3 className="text-xl font-semibold">Generated Message</h3>
-        <Textarea value={template} rows={10} readOnly />
+        <Textarea value={template} rows={12} readOnly />
         <Button
           onClick={handleCopy}
           className="bg-[#38b2ac] text-white hover:bg-[#2c9c96]"

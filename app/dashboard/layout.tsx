@@ -15,9 +15,9 @@ import { useSyncUser } from "@/lib/syncUser"
 
 const navLinks = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Overview" },
-    { href: "/dashboard/templates", icon: Sparkles, label: "Generate Text" },
-  { href: "/dashboard/leads", icon: Users, label: "Leads" },
   { href: "/dashboard/campaigns", icon: Send, label: "Campaigns" },
+  { href: "/dashboard/templates", icon: Sparkles, label: "Generate Text" },
+  { href: "/dashboard/leads", icon: Users, label: "Leads" },
   { href: "/dashboard/settings", icon: Settings, label: "Settings" },
 ]
 

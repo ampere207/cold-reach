@@ -111,7 +111,7 @@ export default function LeadsPage() {
 
       {/* Filter Dropdown */}
       <div className="mb-8">
-        <Label className="mb-2 block text-sm font-semibold text-gray-700">
+        <Label className="mb-2 block text-md font-semibold text-gray-700">
           🎯 Filter by Campaign
         </Label>
         <div className="relative">
@@ -119,7 +119,7 @@ export default function LeadsPage() {
             value={selectedCampaignId}
             onChange={(e) => setSelectedCampaignId(e.target.value)}
             className={cn(
-              'w-full p-3 rounded-lg bg-white/60 backdrop-blur-md border text-sm appearance-none',
+              'w-full p-3 rounded-lg bg-white/60 backdrop-blur-md border text-md appearance-none',
               'pr-10 border-white/30 focus:outline-none shadow-sm'
             )}
           >
@@ -165,19 +165,19 @@ export default function LeadsPage() {
                 className="bg-white/50 backdrop-blur-lg border border-white/20 shadow-xl rounded-xl hover:shadow-2xl transition duration-300"
               >
                 <CardContent className="p-6 space-y-3">
-                  <div className="text-xs text-gray-500 tracking-wide">
+                  <div className="text-sm text-gray-500 tracking-wide">
                     {new Date(template.created_at).toLocaleString()}
                   </div>
                   <div className="text-lg font-bold text-[#333]">
                     📨 To: <span className="text-[#111]">{template.recipient_name}</span>
                   </div>
-                  <div className="text-sm text-gray-600 italic">
-                    🎯 Motive: <span className="text-gray-800">{template.motive}</span>
+                  <div className="text-md text-gray-900 italic">
+                    🎯 Motive: <span className="text-gray-900">{template.motive}</span>
                   </div>
-                  <div className="text-sm text-gray-700">
+                  <div className="text-md text-gray-700">
                     🧩 Campaign: <span className="font-medium">{campaignName}</span>
                   </div>
-                  <pre className="whitespace-pre-wrap text-sm bg-white/40 p-4 rounded-xl border border-white/20 font-mono text-gray-800">
+                  <pre className="whitespace-pre-wrap text-md bg-white/40 p-4 rounded-xl border border-white/20 font-mono text-gray-800">
                     {template.content}
                   </pre>
                 </CardContent>

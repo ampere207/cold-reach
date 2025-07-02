@@ -168,7 +168,7 @@ return (
           >
             <CardContent className="p-5 space-y-3">
               <div className="flex justify-between items-center">
-                <div className="font-semibold text-lg text-gray-800">{c.name}</div>
+                <div className="font-semibold text-xl text-gray-800">{c.name}</div>
 
                 <select
                   value={c.status ?? ''}
@@ -190,7 +190,7 @@ return (
                       alert('Failed to update status')
                     }
                   }}
-                  className="text-sm px-3 py-1 rounded-md bg-white border border-gray-300 text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#38b2ac]"
+                  className="text-md px-3 py-1 rounded-md bg-white border border-gray-300 text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#38b2ac]"
                 >
                   <option value="">Set Status</option>
                   <option value="ongoing">🟢 Ongoing</option>
@@ -199,12 +199,12 @@ return (
                 </select>
               </div>
 
-              <div className="text-sm text-gray-700 italic">
+              <div className="text-lg text-gray-900 italic">
                 🎯 {c.audience_description}
               </div>
 
-              <div className="text-sm text-gray-500">
-                Created: {new Date(c.created_at).toLocaleString()}
+              <div className="text-md text-gray-600">
+                Created: {new Date(c.created_at).toLocaleDateString()}
               </div>
             </CardContent>
           </Card>

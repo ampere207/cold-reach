@@ -94,9 +94,10 @@ export default function Home() {
       <section className="max-w-6xl mx-auto px-6 py-20">
         <h2 className="text-3xl font-bold text-center mb-12">How ColdReach Works</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <StepCard icon={<Users size={32} />} title="1. Paste LinkedIn URL" desc="Extract rich data like name, company, and title." />
+          <StepCard icon={<Users size={32} />} title="1. Paste LinkedIn URL" desc="Extract rich data like name, company, title and more." />
           <StepCard icon={<Brain size={32} />} title="2. Let AI Do the Work" desc="ColdReach uses AI to write a message that feels human." />
-          <StepCard icon={<Send size={32} />} title="3. Send & Track" desc="Push to campaigns and track opens, replies, and conversions." />
+          <StepCard icon={<Send size={32} />} title="3. Streamline Your Workflow"
+  desc="Group messages into campaigns and manage your outreach pipeline effortlessly." />
         </div>
       </section>
 
