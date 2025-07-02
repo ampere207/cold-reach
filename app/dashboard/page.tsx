@@ -65,7 +65,7 @@ export default function DashboardPage() {
     <div className="animate-fade-in">
       <h2 className="text-4xl font-bold mb-4 text-gray-900">Welcome back 👋</h2>
       <p className="text-gray-600 mb-10 text-lg">
-        Here's an overview of your outreach performance.
+        Here&apos;s an overview of your outreach performance.
       </p>
 
       {/* Stat Cards */}

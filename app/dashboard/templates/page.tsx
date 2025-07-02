@@ -10,14 +10,22 @@ import { createSupabaseBrowserClient } from '@/lib/supabase'
 import { useUser } from '@clerk/nextjs'
 import { Loader2 } from 'lucide-react'
 
+interface Campaign {
+  id: string
+  name: string
+  created_at: string
+  status?: 'ongoing' | 'halted' | 'completed' | null
+}
+
+
 export default function TemplatesPage() {
   const [linkedinUrl, setLinkedinUrl] = useState('')
   const [motive, setMotive] = useState('')
   const [template, setTemplate] = useState('')
-  const [email, setEmail] = useState('')
+  //const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [loadingStage, setLoadingStage] = useState('')
-  const [campaigns, setCampaigns] = useState<any[]>([])
+  const [campaigns, setCampaigns] = useState<Campaign[]>([])
   const [selectedCampaign, setSelectedCampaign] = useState<string | null>(null)
   const [userUuid, setUserUuid] = useState<string | null>(null)
 

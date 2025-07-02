@@ -19,7 +19,7 @@ export function useSyncUser() {
 
     //console.log('Syncing user:', user)
 
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('users')
       .select('id')
       .eq('id', user.id)

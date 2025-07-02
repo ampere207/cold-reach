@@ -16,7 +16,7 @@ interface TemplateRow {
   recipient_name: string
   created_at: string
   campaign_selected?: string | null
-  scraped_data?: any
+  scraped_data?: string | null
 }
 
 interface Campaign {

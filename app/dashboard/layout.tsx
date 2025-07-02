@@ -6,7 +6,7 @@ import { UserButton } from "@clerk/nextjs"
 import {
   LayoutDashboard,
   Users,
-  Mail,
+  //Mail,
   Settings,
   Sparkles,
   Send,
